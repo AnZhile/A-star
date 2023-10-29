@@ -1,8 +1,11 @@
 server:
   port: 80
+  tomcat:
+    basedir: /tmp/tomcat
 mybatis-plus:
   configuration:
     log-impl: org.apache.ibatis.logging.stdout.StdOutImpl # 查看日志
+  mapper-locations: classpath:/mapper/*Mapper.xml
 spring:
   datasource:
     type: com.zaxxer.hikari.HikariDataSource
@@ -10,8 +13,11 @@ spring:
     url: jdbc:mysql://localhost:3306/university_use?serverTimezone=GMT%2B8&useSSL=false&characterEncoding=utf-8
     username: root
     password: abc123
-  resources:
-    static-locations: file:${web.upload-path},classpath:/META-INF/resources/,classpath:/resources/,classpath:/static/,classpath:/public/
+#  mvc:
+#    static-path-pattern: /**
+#  web:
+#    static-locations: file:D:\File\images
   jackson:
     date-format: yyyy-MM-dd HH:mm:ss
     time-zone: GMT+8
+

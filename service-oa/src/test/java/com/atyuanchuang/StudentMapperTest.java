@@ -1,14 +1,23 @@
 package com.atyuanchuang;
 
-import com.atyuanchuang.person.mapper.StudentMapper;
-import com.atyuanchuang.model.user.User;
-import com.atyuanchuang.person.service.impl.UserServiceImpl;
+import com.atyuanchuang.award.srevice.AwardService;
+import com.atyuanchuang.contest.service.ContestService;
+import com.atyuanchuang.member.mapper.GroupMapper;
+import com.atyuanchuang.member.mapper.SelfMapper;
+import com.atyuanchuang.member.service.GroupSelfService;
+import com.atyuanchuang.member.service.GroupService;
+import com.atyuanchuang.member.service.impl.GroupServiceImpl;
+import com.atyuanchuang.model.awardDAO.Award;
+import com.atyuanchuang.model.memberDAO.User;
+import com.atyuanchuang.member.service.impl.SelfServiceImpl;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.test.context.event.annotation.AfterTestClass;
 import org.springframework.test.context.junit4.SpringRunner;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -19,34 +28,66 @@ import java.util.List;
 @SpringBootTest
 public class StudentMapperTest {
     @Autowired
-    private StudentMapper studentMapper;
+    private GroupService groupService;
 
     @Autowired
-    private UserServiceImpl sysRoleService;
-//    @Test
-//    public void testSelectList() {
-//        List<Students> students = studentMapper.selectList(null);
-//        students.forEach(System.out::println);
-//    }
+    private AwardService awardService;
+
+    @Autowired
+    private GroupSelfService groupSelfService;
+
+    @Autowired
+    private ContestService contestService;
+
+    @Autowired
+    private GroupMapper groupMapper;
+
+    @Autowired
+    private SelfMapper selfMapper;
+
 
     @Test
     public void testSelectList() {
-        System.out.println(("----- selectAll method test ------"));
-        //UserMapper 中的 selectList() 方法的参数为 MP 内置的条件封装器 Wrapper
-        //所以不填写就是无任何条件
-        List<User> users = sysRoleService.list();
-        users.forEach(System.out::println);
+        groupService.getAllGroupSelf();
+    }
+    @Test
+    public void test1() {
+        groupService.getGroupBySelfId(43L);
     }
 
     @Test
-    public void testInsert(){
-        User sysRole = new User();
-        sysRole.setName("角色管理员");
-        sysRole.setCard("role");
-        sysRole.setPassword("角色管理员");
-
-        boolean result = sysRoleService.save(sysRole);
-        System.out.println(result); //影响的行数
-        System.out.println(sysRole); //id自动回填
+    public void test2() {
+        contestService.list();
     }
+
+    @Test
+    public void test() {
+        awardService.getAwardById(36L);
+    }
+
+    @Test
+    public void test3() {
+        List<String> strings = new ArrayList<>();
+        strings.add("qq");
+        strings.add("xx");
+        strings.add("3");
+        selfMapper.check(strings);
+        System.out.println("groupMapper.check(strings) = " + selfMapper.check(strings));
+    }
+
+    @Test
+    public void test4() {
+        Award award = new Award();
+        award.setGroupName("5");
+        award.setUserName("r");
+        groupMapper.checkGroup(award);
+        System.out.println("groupMapper.check(award) = " + groupMapper.checkGroup(award).size());
+
+    }
+
+    @Test
+    public void test5() {
+        awardService.getAwardById(75L);
+    }
+
 }

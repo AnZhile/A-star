@@ -2,19 +2,17 @@ package com.atyuanchuang.award.controller;
 
 import com.atyuanchuang.award.srevice.AwardService;
 import com.atyuanchuang.common.result.Result;
-import com.atyuanchuang.common.utils.PictureUtil;
-import com.atyuanchuang.model.award.Awards;
-import com.atyuanchuang.person.service.UserService;
+import com.atyuanchuang.common.result.ResultCodeEnum;
+import com.atyuanchuang.common.utils.other.PictureUtil;
+import com.atyuanchuang.model.awardDAO.Award;
+import com.atyuanchuang.model.A_base.Photo;
+import com.atyuanchuang.vo.VoData;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.multipart.MultipartFile;
-
-import javax.servlet.http.HttpServletRequest;
 import java.util.Collections;
 import java.util.List;
 
@@ -33,24 +31,41 @@ public class AwadController {
 
     @ApiOperation(value = "获取奖项列表")
     @GetMapping("findAll/{id}")
-    public Result<List<Awards>> findAll(@PathVariable Long id) {
-        List<Awards> list = awardService.getAwardById(id);
+    public Result<List<Award>> findAll(@PathVariable Long id) {
+        List<Award> list = awardService.getAwardById(id);
         Collections.reverse(list);
+        return Result.ok(list);
+    }
+
+    @ApiOperation(value = "根据比赛名称获取获奖信息")
+    @GetMapping("findForAwardName/{name}")
+    public Result<List<Award>> findForName(@PathVariable String name) {
+        List<Award> list = awardService.getAwardByContestName(name);
+        return Result.ok(list);
+    }
+
+    @ApiOperation(value = "根据名称，日期后去获奖信息")
+    @PostMapping("findForDate")
+    public Result<List<Award>> findForDate(@RequestBody VoData VoData) {
+        List<Award> list = awardService.getAwardByDate(VoData);
         return Result.ok(list);
     }
 
     //增加奖项
     @ApiOperation(value = "新增奖项")
     @PostMapping("save")
-    public Result save(@RequestBody @Validated Awards awards) {
-        awardService.save(awards);
-        return Result.ok();
+    public Result save(@RequestBody @Validated Award awards) {
+        boolean st = awardService.saveAward(awards);
+        if (st == false)
+            return Result.fail(ResultCodeEnum.DATA_ERROR);
+        else
+            return Result.ok();
     }
 
     //修改奖项信息
     @ApiOperation(value = "修改奖项信息")
     @PostMapping("update")
-    public Result updateById(@RequestBody Awards awards) {
+    public Result updateById(@RequestBody Award awards) {
         awardService.updateById(awards);
         return Result.ok();
     }
@@ -70,18 +85,20 @@ public class AwadController {
     }
     @ApiOperation(value = "修改图片信息")
     @PostMapping("updateForPhoto")
-    public Result updateForPhoto(@RequestParam("file") MultipartFile file,
-                                 @RequestParam("id") Long id) {
-        System.out.println(1);
+    public Result updateForPhoto(@RequestBody Photo photo) {
+        String file = photo.getFile();
+        Long id = photo.getId();
+        String url = null;
         try {
-            String url = PictureUtil.upload(file, id);
-            Awards awards = awardService.getById(id);
-            awards.setUrl(url);
+            url = PictureUtil.base64ToImage(file,id,"Award");
+            Award awards = awardService.getById(id);
+            awards.setImageUrl(url);
             awardService.updateById(awards);
         } catch (Exception e){
-            return Result.fail();
+            return Result.fail(url);
         }
-        return Result.ok();
+        return Result.ok(url);
     }
-
 }
+
+

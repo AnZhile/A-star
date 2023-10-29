@@ -5,6 +5,7 @@ import lombok.Data;
 /**
  * @author Anzhi
  * @data 2023/7/29 - 15:16
+ * 封装返回数据，规定了返回信息号
  */
 @Data
 public class Result<T> {
@@ -41,6 +42,14 @@ public class Result<T> {
         return result;
     }
 
+    public static <T> Result<T> build(Integer code,String message)
+    {
+        Result<T> result = new Result<>();
+        result.setCode(code);
+        result.setMessage(message);
+        return result;
+    }
+
     public static<T> Result<T> ok(){
         return Result.ok(null);
     }
@@ -60,6 +69,7 @@ public class Result<T> {
         return Result.fail(null);
     }
 
+
     /**
      * 操作失败
      * @param data
@@ -69,6 +79,15 @@ public class Result<T> {
     public static<T> Result<T> fail(T data){
         Result<T> result = build(data);
         return build(data, ResultCodeEnum.FAIL);
+    }
+
+    public static<T> Result<T> fail(T data,ResultCodeEnum resultCodeEnum){
+        Result<T> result = build(data);
+        return build(data, resultCodeEnum);
+    }
+
+    public static<T> Result<T> fail(ResultCodeEnum resultCodeEnum){
+        return build(null,resultCodeEnum);
     }
 
     public Result<T> message(String msg){

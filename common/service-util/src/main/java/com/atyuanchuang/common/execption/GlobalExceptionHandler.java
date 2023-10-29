@@ -1,7 +1,7 @@
 package com.atyuanchuang.common.execption;
 
-import com.atyuanchuang.common.execption.YcaException;
 import com.atyuanchuang.common.result.Result;
+import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseBody;
@@ -28,9 +28,9 @@ public class GlobalExceptionHandler {
         return Result.fail().message("执行了特定异常处理");
     }
 
-    @ExceptionHandler(YcaException.class)
+    @ExceptionHandler(yuanchuangException.class)
     @ResponseBody
-    public Result error(YcaException e){
+    public Result error(yuanchuangException e){
         e.printStackTrace();
         return Result.fail().message(e.getMessage()).code(e.getCode());
     }
